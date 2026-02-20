@@ -13,11 +13,15 @@ public class Player : MonoBehaviour
     public float forceJump = 2;
 
 
-    [Header("animation Setup")]
+    [Header("Animation Setup")]
     public float jumpscaleY = 1.5f;
     public float jumpscaleX = 1.5f;
     public float animationDuration = .3f;
     public Ease ease = Ease.OutBack;
+
+    [Header("Animation Player")]
+    public string Boolrun = "Run";
+    public Animator animator;
 
 
     private float _currentspeed;
@@ -42,12 +46,28 @@ public class Player : MonoBehaviour
         {
             //myRigidbody.MovePosition(myRigidbody.position - velocity * Time.deltaTime);
             myRigidbody.linearVelocity = new Vector2(-_currentspeed, myRigidbody.linearVelocity.y);
+            animator.SetBool(Boolrun, true);
+            if (myRigidbody.transform.localScale.x != -1)
+            {
+                myRigidbody.transform.DOScaleX(-1, 1f);
+            }
+
         }
 
         if (Input.GetKey(KeyCode.RightArrow))
         {
             //myRigidbody.MovePosition(myRigidbody.position + velocity * Time.deltaTime);
             myRigidbody.linearVelocity = new Vector2(_currentspeed, myRigidbody.linearVelocity.y);
+            animator.SetBool(Boolrun, true);
+            if (myRigidbody.transform.localScale.x != 1)
+            {
+                myRigidbody.transform.DOScaleX(1, 1f);
+            }
+        }
+
+        else
+        {
+            animator.SetBool(Boolrun, false);
         }
 
         if (myRigidbody.linearVelocity.x>0)
