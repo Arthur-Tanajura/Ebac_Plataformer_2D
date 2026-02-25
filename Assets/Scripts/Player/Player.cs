@@ -22,9 +22,9 @@ public class Player : MonoBehaviour
     [Header("Animation Player")]
     public string Boolrun = "Run";
     public Animator animator;
-
-
+    public float playerSwipeDuration = .1f;
     private float _currentspeed;
+    private bool _isRunning = false;
 
     private void Update()
     {
@@ -36,32 +36,38 @@ public class Player : MonoBehaviour
     private void HandleMoviment()
     {
         if (Input.GetKey(KeyCode.LeftControl))
-        _currentspeed = speedrun;
+        {
+
+            _currentspeed = speedrun;
+            animator.speed = 2;
+        }
+
         else
-        _currentspeed = speed;
-
-
+        {
+            _currentspeed = speed;
+            animator.speed = 1;
+        }
 
         if (Input.GetKey(KeyCode.LeftArrow))
         {
             //myRigidbody.MovePosition(myRigidbody.position - velocity * Time.deltaTime);
             myRigidbody.linearVelocity = new Vector2(-_currentspeed, myRigidbody.linearVelocity.y);
-            animator.SetBool(Boolrun, true);
+            animator.SetBool(Boolrun,true);
             if (myRigidbody.transform.localScale.x != -1)
             {
-                myRigidbody.transform.DOScaleX(-1, 1f);
+                myRigidbody.transform.DOScaleX(-1, playerSwipeDuration);
             }
 
         }
 
-        if (Input.GetKey(KeyCode.RightArrow))
+        else if (Input.GetKey(KeyCode.RightArrow))
         {
             //myRigidbody.MovePosition(myRigidbody.position + velocity * Time.deltaTime);
             myRigidbody.linearVelocity = new Vector2(_currentspeed, myRigidbody.linearVelocity.y);
-            animator.SetBool(Boolrun, true);
+            animator.SetBool(Boolrun,true);
             if (myRigidbody.transform.localScale.x != 1)
             {
-                myRigidbody.transform.DOScaleX(1, 1f);
+                myRigidbody.transform.DOScaleX(1, playerSwipeDuration);
             }
         }
 
