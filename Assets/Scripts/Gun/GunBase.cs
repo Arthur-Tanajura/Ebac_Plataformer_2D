@@ -8,6 +8,7 @@ public class GunBase : MonoBehaviour
     public ProjectileBase prefabProjectile;
     public Transform positionToShoot;
     public float timeBetweenShoot = .3f;
+    public Transform playerSideReference;
 
     private Coroutine _currentCoroutine;
 
@@ -15,13 +16,12 @@ public class GunBase : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.S))
         {
-            StartCoroutine(StartShoot());
+           _currentCoroutine = StartCoroutine(StartShoot());
         }
         
         else if (Input.GetKeyUp(KeyCode.S))
         {
-            if (_currentCoroutine != null) 
-                StopCoroutine(_currentCoroutine);
+            if (_currentCoroutine != null) StopCoroutine(_currentCoroutine);
          
         }
 
@@ -40,6 +40,7 @@ public class GunBase : MonoBehaviour
     {
 
         var projectile= Instantiate(prefabProjectile);
-
+        projectile.transform.position= positionToShoot.position;
+        projectile.side = playerSideReference.transform.localScale.x;
     }
 }
