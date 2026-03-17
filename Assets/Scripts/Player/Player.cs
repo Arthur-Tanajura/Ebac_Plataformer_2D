@@ -8,23 +8,10 @@ public class Player : MonoBehaviour
     public Rigidbody2D myRigidbody;
     public HealthBase healthBase;
 
-    [Header("Speed setup")]
-    public Vector2 friction = new Vector2(.1f,0);
-    public float speed;
-    public float speedrun;
-    public float forceJump = 2;
-
-
-    [Header("Animation Setup")]
-    public float jumpscaleY = 1.5f;
-    public float jumpscaleX = 1.5f;
-    public float animationDuration = .3f;
-    public Ease ease = Ease.OutBack;
-
-    [Header("Animation Player")]
-    public string Boolrun = "Run";
-    public string triggerDeath = "Death";
-    public Animator animator;
+    [Header("Setup")]
+    public SOPlayerSetup soPlayerSetup;
+   
+    private Animator _currentPlayer;
     public float playerSwipeDuration = .1f;
     private float _currentspeed;
     private bool _isRunning = false;
@@ -38,12 +25,16 @@ public class Player : MonoBehaviour
             healthBase.OnKill += OnPlayerKill;
             
         }
+
+
+       _currentPlayer = Instantiate(soPlayerSetup.player, transform);
+
     }
 
     private void OnPlayerKill()
     {
         healthBase.OnKill -= OnPlayerKill;
-        animator.SetTrigger(triggerDeath);
+        _currentPlayer.SetTrigger(soPlayerSetup.triggerDeath);
     }
 
     private void Update()
@@ -58,21 +49,21 @@ public class Player : MonoBehaviour
         if (Input.GetKey(KeyCode.LeftControl))
         {
 
-            _currentspeed = speedrun;
-            animator.speed = 2;
+            _currentspeed = soPlayerSetup.speedrun;
+            _currentPlayer.speed = 2;
         }
 
         else
         {
-            _currentspeed = speed;
-            animator.speed = 1;
+            _currentspeed = soPlayerSetup.speed;
+            _currentPlayer.speed = 1;
         }
 
         if (Input.GetKey(KeyCode.LeftArrow))
         {
             //myRigidbody.MovePosition(myRigidbody.position - velocity * Time.deltaTime);
             myRigidbody.linearVelocity = new Vector2(-_currentspeed, myRigidbody.linearVelocity.y);
-            animator.SetBool(Boolrun,true);
+            _currentPlayer.SetBool(soPlayerSetup.Boolrun, true);
             if (myRigidbody.transform.localScale.x != -1)
             {
                 myRigidbody.transform.DOScaleX(-1, playerSwipeDuration);
@@ -84,7 +75,7 @@ public class Player : MonoBehaviour
         {
             //myRigidbody.MovePosition(myRigidbody.position + velocity * Time.deltaTime);
             myRigidbody.linearVelocity = new Vector2(_currentspeed, myRigidbody.linearVelocity.y);
-            animator.SetBool(Boolrun,true);
+            _currentPlayer.SetBool(soPlayerSetup.Boolrun, true);
             if (myRigidbody.transform.localScale.x != 1)
             {
                 myRigidbody.transform.DOScaleX(1, playerSwipeDuration);
@@ -93,16 +84,16 @@ public class Player : MonoBehaviour
 
         else
         {
-            animator.SetBool(Boolrun, false);
+            _currentPlayer.SetBool(soPlayerSetup.Boolrun, false);
         }
 
         if (myRigidbody.linearVelocity.x>0)
         {
-            myRigidbody.linearVelocity += friction;
+            myRigidbody.linearVelocity += soPlayerSetup.friction;
         }
         else if (myRigidbody.linearVelocity.x < 0)
         {
-            myRigidbody.linearVelocity -= friction;
+            myRigidbody.linearVelocity -= soPlayerSetup.friction;
         }
     }
 
@@ -111,7 +102,7 @@ public class Player : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.Space))
         {
             //myRigidbody.MovePosition(myRigidbody.position - velocity * Time.deltaTime);
-            myRigidbody.linearVelocity = Vector2.up * forceJump;
+            myRigidbody.linearVelocity = Vector2.up * soPlayerSetup.forceJump;
             myRigidbody.transform.localScale = Vector2.one;
             DOTween.Kill(myRigidbody.transform);
             HandleScaleJump();
@@ -120,8 +111,8 @@ public class Player : MonoBehaviour
 
     private void HandleScaleJump()
     {
-        myRigidbody.transform.DOScaleY(jumpscaleY, animationDuration).SetLoops(2, LoopType.Yoyo).SetEase(ease);
-        myRigidbody.transform.DOScaleX(jumpscaleX, animationDuration).SetLoops(2, LoopType.Yoyo).SetEase(ease);
+        myRigidbody.transform.DOScaleY(soPlayerSetup.jumpscaleY, soPlayerSetup.animationDuration).SetLoops(2, LoopType.Yoyo).SetEase(soPlayerSetup.ease);
+        myRigidbody.transform.DOScaleX(soPlayerSetup.jumpscaleX, soPlayerSetup.animationDuration).SetLoops(2, LoopType.Yoyo).SetEase(soPlayerSetup.ease);
     }
 
     internal void DestroyMe()
