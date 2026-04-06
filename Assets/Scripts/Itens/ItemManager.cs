@@ -28,5 +28,10 @@ public class ItemManager : Singleton<ItemManager>
         uiTextCoins.text = coins.value.ToString();
     }
 
+    public void loseCoins(int amount = -1)
+    {
+        coins.value -= amount;
+        UpdateUI();
+    }
 }
 

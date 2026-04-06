@@ -11,7 +11,7 @@ public class SOPlayerSetup : ScriptableObject
     public Vector2 friction = new Vector2(.1f, 0);
     public float speed;
     public float speedrun;
-    public float forceJump = 2;
+    public float forceJump = 6;
 
     [Header("Animation Setup")]
     public float jumpscaleY = 1.5f;

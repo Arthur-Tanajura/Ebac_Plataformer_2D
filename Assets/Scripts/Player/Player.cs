@@ -10,27 +10,39 @@ public class Player : MonoBehaviour
 
     [Header("Setup")]
     public SOPlayerSetup soPlayerSetup;
-   
+    private bool _isRunning = false;
     private Animator _currentPlayer;
     public float playerSwipeDuration = .1f;
     private float _currentspeed;
-    private bool _isRunning = false;
 
-    
+    [Header("Jump Collision Ceck")]
+    public Collider2D collider2D;
+    public float distToGround;
+    public float spaceToGround;
+    public ParticleSystem jumpVFX;
 
     private void Awake()
     {
         if (healthBase != null)
         {
             healthBase.OnKill += OnPlayerKill;
-            
+
         }
+        _currentPlayer = Instantiate(soPlayerSetup.player, transform);
 
+        if (collider2D != null)
+        {
+            distToGround = collider2D.bounds.extents.y;
 
-       _currentPlayer = Instantiate(soPlayerSetup.player, transform);
-
+        }
     }
 
+    private bool IsGrounded()
+    {
+        Debug.DrawRay (transform.position, -Vector2.up, Color.magenta, distToGround + spaceToGround);
+        return Physics2D.Raycast(transform.position, -Vector2.up, distToGround + spaceToGround);
+    }
+    
     private void OnPlayerKill()
     {
         healthBase.OnKill -= OnPlayerKill;
@@ -99,16 +111,21 @@ public class Player : MonoBehaviour
 
     private void HandleJump()
     {
-        if (Input.GetKeyDown(KeyCode.Space))
+        if (Input.GetKeyDown(KeyCode.Space) && IsGrounded())
         {
             //myRigidbody.MovePosition(myRigidbody.position - velocity * Time.deltaTime);
             myRigidbody.linearVelocity = Vector2.up * soPlayerSetup.forceJump;
             myRigidbody.transform.localScale = Vector2.one;
             DOTween.Kill(myRigidbody.transform);
             HandleScaleJump();
+            PlayJumpVFX();
         }
     }
 
+     private void PlayJumpVFX()
+    {
+        if (jumpVFX != null) jumpVFX.Play();
+    }
     private void HandleScaleJump()
     {
         myRigidbody.transform.DOScaleY(soPlayerSetup.jumpscaleY, soPlayerSetup.animationDuration).SetLoops(2, LoopType.Yoyo).SetEase(soPlayerSetup.ease);
