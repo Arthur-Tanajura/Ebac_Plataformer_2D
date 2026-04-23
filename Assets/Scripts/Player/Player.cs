@@ -117,12 +117,18 @@ public class Player : MonoBehaviour
             myRigidbody.linearVelocity = Vector2.up * soPlayerSetup.forceJump;
             myRigidbody.transform.localScale = Vector2.one;
             DOTween.Kill(myRigidbody.transform);
+            _currentPlayer.SetBool(soPlayerSetup.BoolJump, true);
             HandleScaleJump();
             PlayJumpVFX();
         }
+
+        else
+        {
+            _currentPlayer.SetBool(soPlayerSetup.BoolJump, false);
+        }
     }
 
-     private void PlayJumpVFX()
+    private void PlayJumpVFX()
     {
         if (jumpVFX != null) jumpVFX.Play();
     }
